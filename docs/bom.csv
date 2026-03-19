@@ -1,0 +1,38 @@
+Reference,Value,Footprint,Manufacturer,MPN,Quantity,Unit Cost (USD),Notes
+U1,STM32F407VGT6,LQFP-100_14x14mm_P0.5mm,STMicroelectronics,STM32F407VGT6,1,11.80,Main MCU
+U2,TPS54331DDA,SOIC-8EP_3.9x4.9mm_P1.27mm,Texas Instruments,TPS54331DDA,1,1.95,12V to 5V buck regulator
+U3,AMS1117-3.3,SOT-223-3,Advanced Monolithic Systems,AMS1117-3.3,1,0.18,5V to 3.3V LDO
+U4,LT3652EDD,DFN-12-EP_3x3mm,Analog Devices,LT3652EDD#PBF,1,8.90,Solar MPPT charger controller
+U5,TPS2596,SOIC-8EP_3.9x4.9mm_P1.27mm,Texas Instruments,TPS25961DRCR,1,1.55,eFuse for motor supply path
+U6,DRV8871DDAR,SOIC-8EP_3.9x4.9mm_P1.27mm,Texas Instruments,DRV8871DDAR,2,1.35,Dual motor channels use two devices
+U7,W25Q128JVSIQ,SOIC-8_3.9x4.9mm_P1.27mm,Winbond,W25Q128JVSIQ,1,1.10,External SPI flash
+U8,BME280,LGA-8_2.5x2.5mm,Bosch Sensortec,BME280,1,2.60,Environmental sensor
+U9,BNO055,LGA-28_5.2x3.8mm,Bosch Sensortec,BNO055,1,13.50,9-axis IMU with fusion
+U10,RFM95W,Module_HopeRF_RFM9x,HopeRF,RFM95W-868S2,1,8.40,LoRa module footprint
+U11,LM358,SOIC-8_3.9x4.9mm_P1.27mm,Texas Instruments,LM358DR,1,0.22,PIR buffer and filter stage
+U12,LM393,SOIC-8_3.9x4.9mm_P1.27mm,Texas Instruments,LM393DR,1,0.18,PIR threshold comparator
+U13,AM26LV32E,TSSOP-16_4.4x5mm_P0.65mm,Texas Instruments,AM26LV32EIPWR,1,1.75,Differential encoder receiver
+J1,XT60-M,XT60PW-M,Amass,XT60PW-M,1,0.85,Battery input connector
+J2,2-pin screw terminal,TerminalBlock_1x02_P5.08mm,Phoenix Contact,1725656,1,0.65,Solar input via MC4 pigtail
+J3,USB-C receptacle,USB_C_Receptacle_HRO_TYPE-C-31-M-12,HRO,TYPE-C-31-M-12,1,0.62,CM4 power and data
+J4,SWD header,PinHeader_2x05_P1.27mm,Samtec,FTSH-105-01-L-DV-K,1,1.95,ARM SWD debug
+J5,GPIO header,PinHeader_2x10_P2.54mm,Samtec,TSW-110-07-G-D,1,1.20,Expansion I/O
+J6,LIDAR JST 4-pin,JST_PH_B4B-PH-K_1x04_P2.00mm,JST,B4B-PH-K-S,1,0.22,UART sensor connector
+J7,Thermal cam JST 6-pin,JST_PH_B6B-PH-K_1x06_P2.00mm,JST,B6B-PH-K-S,1,0.28,I2C or SPI off-board sensor
+J8,SMA edge mount,SMA_Molex_73251-1150_EdgeMount,Molex,0732511150,1,1.10,LoRa antenna connector
+SW1,Latching push button,SW_SPST_B3SL-1022P,Omron,B3SL-1022P,1,0.48,Main power control
+JP1,BOOT0 jumper,PinHeader_1x02_P2.54mm,Samtec,TSW-102-07-G-S,1,0.18,MCU boot select
+F1,Polyfuse 5A,1812L,Littlefuse,1812L500PR,1,0.42,Input protection
+Q1,P-channel MOSFET,SOT-223,Nexperia,PMV65XP,1,0.26,Reverse-polarity protection for solar input
+L1,15uH shielded inductor,Inductor_SMD_L_7.3x7.3mm,Wurth Elektronik,7447779150,1,0.78,Buck converter power inductor
+D1,Schottky diode,SMA,Diodes Inc,B340A-13-F,1,0.12,Buck freewheel diode
+D2,TVS diode,SMAJ,Littlefuse,SMAJ24A,1,0.24,Solar input transient protection
+D3,D4,Schottky diode,SOD-123,Diodes Inc,SS14-7-F,2,0.08,Motor channel clamp / protection
+Y1,8MHz crystal,Crystal_SMD_3225-4Pin_3.2x2.5mm,Abracon,ABM8G-8.000MHZ-18-D2Y-T,1,0.32,HSE clock
+Y2,32.768kHz crystal,Crystal_SMD_3215-2Pin_3.2x1.5mm,Abracon,ABS07-32.768KHZ-T,1,0.28,LSE clock
+LED1,Green LED,LED_0603_1608Metric,Lite-On,LTST-C190KGKT,1,0.03,Power indicator
+LED2,Amber LED,LED_0603_1608Metric,Lite-On,LTST-C190KSKT,1,0.03,Charging indicator
+LED3,Red LED,LED_0603_1608Metric,Lite-On,LTST-C190KRKT,1,0.03,Fault indicator
+LED4,Blue LED,LED_0603_1608Metric,Lite-On,LTST-C190TBKT,1,0.04,Comms indicator
+R_PASSIVES,Resistor assortment 1 percent,0603,Yageo,RC0603FR-0710KL,40,0.01,Feedback dividers pull-ups sense networks
+C_PASSIVES,Ceramic capacitor assortment,0603,Murata,GRM188R61A106KAALD,55,0.02,Decoupling bulk and filter capacitors

@@ -1,0 +1,41 @@
+{
+  "board": {
+    "design_settings": {
+      "defaults": {
+        "board_outline_line_width": 0.1,
+        "copper_line_width": 0.2,
+        "copper_text_size_h": 1.0,
+        "copper_text_size_v": 1.0,
+        "copper_text_thickness": 0.15,
+        "other_line_width": 0.1,
+        "silk_line_width": 0.12
+      },
+      "rules": {
+        "min_clearance": 0.2,
+        "min_track_width": 0.2,
+        "min_via_diameter": 0.6,
+        "min_via_drill": 0.3
+      },
+      "stackup": [
+        { "name": "F.Cu", "type": "copper", "thickness": 0.035 },
+        { "name": "In1.Cu", "type": "copper", "thickness": 0.035, "description": "Solid GND plane" },
+        { "name": "In2.Cu", "type": "copper", "thickness": 0.035, "description": "Split power plane" },
+        { "name": "B.Cu", "type": "copper", "thickness": 0.035 }
+      ]
+    }
+  },
+  "meta": {
+    "filename": "forest-rover.kicad_pro",
+    "version": 1
+  },
+  "project": {
+    "name": "forest-rover",
+    "notes": "Portfolio scaffold for a 4-layer rover main controller PCB."
+  },
+  "schematic": {
+    "legacy_lib_dir": "",
+    "meta": {
+      "version": 1
+    }
+  }
+}

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <rect width="1200" height="700" fill="#f2efe7"/>
+  <rect x="120" y="70" width="960" height="560" rx="24" fill="#214d3d" stroke="#17362b" stroke-width="8"/>
+  <rect x="170" y="120" width="220" height="140" rx="16" fill="#d7b66a"/>
+  <text x="195" y="190" font-family="Helvetica, Arial, sans-serif" font-size="34" fill="#17362b">Power Stage</text>
+  <rect x="435" y="130" width="260" height="220" rx="18" fill="#9fc3b1"/>
+  <text x="495" y="245" font-family="Helvetica, Arial, sans-serif" font-size="42" fill="#17362b">STM32F407</text>
+  <rect x="740" y="120" width="180" height="120" rx="16" fill="#8fc0d8"/>
+  <text x="783" y="190" font-family="Helvetica, Arial, sans-serif" font-size="34" fill="#17362b">LoRa</text>
+  <rect x="930" y="142" width="70" height="20" rx="6" fill="#d9d9d9"/>
+  <text x="930" y="130" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#17362b">SMA edge</text>
+  <rect x="195" y="360" width="240" height="150" rx="16" fill="#d8a48f"/>
+  <text x="217" y="445" font-family="Helvetica, Arial, sans-serif" font-size="34" fill="#17362b">Analog AFE</text>
+  <rect x="500" y="400" width="250" height="140" rx="16" fill="#d96c4d"/>
+  <text x="535" y="478" font-family="Helvetica, Arial, sans-serif" font-size="34" fill="#fff7ef">Motor Drivers</text>
+  <rect x="820" y="390" width="180" height="130" rx="16" fill="#efe7cf"/>
+  <text x="860" y="465" font-family="Helvetica, Arial, sans-serif" font-size="30" fill="#17362b">CM4 I/O</text>
+  <circle cx="155" cy="105" r="16" fill="none" stroke="#d9d9d9" stroke-width="6"/>
+  <circle cx="1045" cy="105" r="16" fill="none" stroke="#d9d9d9" stroke-width="6"/>
+  <circle cx="155" cy="595" r="16" fill="none" stroke="#d9d9d9" stroke-width="6"/>
+  <circle cx="1045" cy="595" r="16" fill="none" stroke="#d9d9d9" stroke-width="6"/>
+  <text x="120" y="655" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#17362b">Forest Surveillance Rover PCB placeholder render</text>
+</svg>

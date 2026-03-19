@@ -1,0 +1,21 @@
+# KiCad
+*.kicad_prl
+*.kicad_pro-bak
+*.kicad_sch-bak
+*.kicad_pcb-bak
+*.net
+*.tmp
+*.bak
+fp-info-cache
+*-backups/
+
+# Outputs
+*.gbr
+*.drl
+*.step
+*.stl
+*.zip
+
+# Editors
+.DS_Store
+Thumbs.db

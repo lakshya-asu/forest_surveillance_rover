@@ -1,0 +1,61 @@
+* Forest Surveillance Rover
+* Simplified 12V -> 5V buck converter transient model
+
+.param Vin=12
+.param Vref=0.8
+.param Fsw=500k
+.param Tsw={1/Fsw}
+.param Duty=0.42
+.param Rload1=10
+.param Rload2=2
+
+Vin in 0 DC {Vin}
+Cin in 0 22u
+
+* PWM ramp and comparator
+Vramp ramp 0 PULSE(0 1 0 5n 5n {Tsw/2} {Tsw})
+Vea vcomp 0 DC {Duty}
+
+Bgate gate 0 V = if(v(vcomp) > v(ramp), 1, 0)
+
+* Idealized switch stage
+S1 in sw gate 0 SWMOD
+D1 0 sw DFAST
+L1 sw out 15u
+ResrL out out_l 0.03
+Cout out_l 0 220u
+ResrC out_l out 0.02
+
+* Load step from 0.5A to 2.5A equivalent
+Rload out 0 {Rload1}
+Rstep out 0 1Meg
+Vstep ctrl 0 PULSE(0 1 2m 1u 1u 2m 10m)
+Gload out 0 value = { v(ctrl) * v(out) / Rload2 }
+
+* Feedback network
+Rfb1 out fb 52.3k
+Rfb2 fb 0 10k
+Eerr vfb 0 VALUE = { Vref - v(fb) }
+
+* Mild compensation proxy to nudge duty after startup
+Ccomp vcomp 0 10n
+Gcomp vcomp 0 value = { 0.02 * v(vfb) }
+Rcomp vcomp 0 100k
+
+.model SWMOD SW(Ron=0.015 Roff=1Meg Vt=0.5 Vh=0.05)
+.model DFAST D(Is=10n Rs=0.03 N=1.1 Cjo=10p M=0.33)
+
+.ic v(out)=0
+
+.control
+set color0=white
+set color1=black
+tran 0.2u 5m
+plot v(out) title "Buck Output Voltage"
+plot i(L1) title "Inductor Current"
+plot v(sw) title "Switch Node Voltage"
+meas tran Vout_final find v(out) at=4.8m
+meas tran I_L_pk max i(L1) from=2m to=4m
+.endc
+
+.end

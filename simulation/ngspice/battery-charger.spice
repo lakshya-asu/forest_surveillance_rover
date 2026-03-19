@@ -1,0 +1,45 @@
+* Forest Surveillance Rover
+* Simplified solar charger / MPPT current limit model
+
+.param Isc=2.4
+.param Voc=18
+.param Vmp=14.4
+.param Ilimit=2.0
+.param Rbat=1.8
+.param Vbat=11.1
+.param Rsense=0.05
+
+* Simple panel source: The DC sweep on Vsun emulates varying panel operating conditions.
+Vsun sun 0 DC {Voc}
+Rseries sun panel 0.35
+Dcell panel cell Dsolar
+Vcurve cell 0 DC 0
+Gphoto panel 0 value = { Isc * (1 - v(panel)/Voc) }
+Rshunt panel 0 2k
+
+* Current-limited charger proxy with a sense resistor and idealized dropout term
+Bchg panel batt I = { min( Ilimit, max(0, (v(panel)-v(batt)-0.4)/0.6 ) ) }
+Rsns batt batt_i {Rsense}
+Rbat batt 0 {Rbat}
+Vpack batt 0 DC {Vbat}
+
+* MPPT operating point probes
+Rprobe panel 0 100k
+Epower pwr 0 VALUE = { v(panel) * @Bchg[i] }
+Emppt vmpp 0 VALUE = { v(panel) - Vmp }
+
+.model Dsolar D(Is=80n N=1.4 Rs=0.15 Cjo=20p M=0.4)
+
+.control
+dc Vsun 10 22 0.25
+plot i(Vsun) title "Solar Panel Current"
+plot v(panel) v(batt) title "Panel and Battery Voltage"
+plot @Bchg[i] title "Charge Current"
+plot v(pwr) title "Approximate Charge Power"
+meas dc Ichg_max max @Bchg[i]
+meas dc Vpanel_at_limit find v(panel) when @Bchg[i]=2
+meas dc Vpanel_near_mpp find v(panel) when v(vmpp)=0
+meas dc Pcharge_max max v(pwr)
+.endc
+
+.end
