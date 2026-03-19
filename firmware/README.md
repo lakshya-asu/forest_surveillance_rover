@@ -9,4 +9,4 @@ A future firmware repository would likely contain:
 - Raspberry Pi CM4 interface services
 - Bring-up and production test utilities
 
-This folder remains as a placeholder to show the intended split between hardware and software deliverables.
+This folder remains here to show the intended split between hardware and software deliverables.

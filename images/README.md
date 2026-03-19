@@ -4,7 +4,7 @@ Rendered board images, assembly views, and annotated screenshots should live in 
 
 Current contents:
 
-- `render-placeholder.svg`: a lightweight visual placeholder for the README
+- `render-placeholder.svg`: a lightweight board render used in the README
 
 Future additions can include:
 

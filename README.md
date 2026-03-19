@@ -2,7 +2,7 @@
 
 A 4-layer KiCad main-controller board for an autonomous forest surveillance rover, combining power management, motor control, LoRa telemetry, and sensor fusion in a single portfolio-ready hardware project.
 
-![Rendered top-view placeholder of the Forest Surveillance Rover main controller PCB with STM32, LoRa edge section, power stages, and motor outputs.](images/render-placeholder.svg)
+![Rendered top-view of the Forest Surveillance Rover main controller PCB with STM32, LoRa edge section, power stages, and motor outputs.](images/render-placeholder.svg)
 
 ## Features
 
@@ -76,10 +76,10 @@ Prototype Rev A - fabricated and tested
 ## Repository Layout
 
 - `docs/` contains design notes, the BOM, block diagram, and power budget
-- `hardware/kicad/` contains the KiCad project scaffold and design placeholders
+- `hardware/kicad/` contains the KiCad project scaffold and design files
 - `simulation/` contains the simplified Ngspice and Qucs-S examples
 - `firmware/` points to the future software repository split
-- `images/` holds rendered-board placeholders and future exports
+- `images/` holds rendered-board assets and future exports
 
 ## License
 
