@@ -1,12 +1,15 @@
 # Forest Surveillance Rover PCB
 
-A 4-layer KiCad main-controller board for an autonomous forest surveillance rover, combining power management, motor control, LoRa telemetry, and sensor fusion in a single portfolio-ready hardware project.
+A 4-layer KiCad main-controller board for an autonomous forest surveillance rover, integrating power management, motor control, LoRa telemetry, and multi-sensor fusion on a single board.
 
 ![Rendered top-view of the Forest Surveillance Rover main controller PCB with STM32, LoRa edge section, power stages, and motor outputs.](images/render-placeholder.svg)
+
+Designed as the rover's central electronics hub, this board ties together the battery and solar power path, real-time control around an STM32F407, long-range telemetry over LoRa, and expansion interfaces for onboard and off-board sensing.
 
 ## Features
 
 - 4-layer PCB stackup: Signal / GND / Power / Signal
+- Approximate board outline: 100 mm x 80 mm with four M3 mounting holes
 - Dual-input power architecture for 3S LiPo battery and solar charging
 - LT3652-inspired MPPT charging stage with reverse-polarity protection
 - TPS54331 12V-to-5V main buck rail and AMS1117-3.3 secondary rail
@@ -69,6 +72,16 @@ The board uses a 4-layer stackup to keep return paths tight, simplify power dist
 
 Component selection favors common parts with strong documentation and broad availability. Built-in KiCad libraries are preferred wherever practical, and the design notes call out where footprints or symbols may need refinement before fabrication.
 
+## Hardware Summary
+
+| Area | Implementation |
+| --- | --- |
+| Main controller | STM32F407VGT6 with HSE/LSE clocks, SWD, BOOT0 access, and external W25Q128 SPI flash |
+| Main power tree | 3S LiPo input, LT3652-style solar charging path, TPS54331 5V rail, AMS1117-3.3 logic rail |
+| Motor path | Battery-fed motor rail behind TPS2596 eFuse with two DRV8871 motor channels |
+| Sensors | BME280, BNO055, PIR analog front-end, thermistor divider, external LIDAR and thermal camera headers |
+| Communications | RFM95W LoRa module with edge SMA, CM4 UART/I2C/interrupt interface, USB-C support |
+
 ## Status
 
 Prototype Rev A - fabricated and tested
@@ -76,7 +89,7 @@ Prototype Rev A - fabricated and tested
 ## Repository Layout
 
 - `docs/` contains design notes, the BOM, block diagram, and power budget
-- `hardware/kicad/` contains the KiCad project scaffold and design files
+- `hardware/kicad/` contains the KiCad project and design files
 - `simulation/` contains the simplified Ngspice and Qucs-S examples
 - `firmware/` points to the future software repository split
 - `images/` holds rendered-board assets and future exports

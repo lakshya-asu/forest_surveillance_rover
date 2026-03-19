@@ -1,6 +1,6 @@
 # Gerber Outputs
 
-Production Gerbers are intentionally not included in this portfolio scaffold.
+Production Gerbers are intentionally not included in this design package yet.
 
 When the KiCad layout is finalized, place generated fabrication outputs here, for example:
 

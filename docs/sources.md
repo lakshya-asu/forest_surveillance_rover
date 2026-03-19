@@ -9,4 +9,4 @@ The design intent in this repository is informed by the following public documen
 - HopeRF RFM95W module datasheet
 - Bosch BME280 and BNO055 datasheets
 
-These references are noted for engineering credibility and future refinement; the current repository remains a simplified portfolio project rather than a release-to-manufacturing design package.
+These references are noted for engineering credibility and future refinement; the current repository remains a simplified design package rather than a release-to-manufacturing handoff.

@@ -192,7 +192,7 @@
   },
   "project": {
     "name": "forest-rover",
-    "notes": "Portfolio scaffold for a 4-layer rover main controller PCB."
+    "notes": "4-layer rover main controller PCB with power, sensing, motor, and telemetry subsystems."
   },
   "schematic": {
     "legacy_lib_dir": "",

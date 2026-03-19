@@ -138,7 +138,7 @@
   (text "Bring-up checklist: ERC cleanup, connector pinout review, footprint verification, power-tree annotation" (at 194 119 0)
     (effects (font (size 1.27 1.27)))
     (uuid "5c8ae4a4-f6bb-4f43-a6ef-9a7e4c113217"))
-  (text "This schematic remains a structured concept. Replace each block with captured circuitry before fabrication." (at 20 171 0)
+  (text "This top-level sheet defines the intended architecture. Replace each block with captured circuitry before fabrication." (at 20 171 0)
     (effects (font (size 1.5 1.5) (thickness 0.2)))
     (uuid "5c8ae4a4-f6bb-4f43-a6ef-9a7e4c113218"))
   (path "/" (page "1"))
