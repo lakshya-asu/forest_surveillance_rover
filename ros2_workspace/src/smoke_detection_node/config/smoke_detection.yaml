@@ -1,0 +1,4 @@
+smoke_detection_node:
+  ros__parameters:
+    warning_ppm: 300.0
+    critical_ppm: 500.0

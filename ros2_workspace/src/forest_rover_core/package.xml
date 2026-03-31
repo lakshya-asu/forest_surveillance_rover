@@ -19,6 +19,7 @@
   <exec_depend>forest_rover_description</exec_depend>
   <exec_depend>forest_rover_msgs</exec_depend>
   <exec_depend>forest_rover_utils</exec_depend>
+  <exec_depend>data_logger_node</exec_depend>
 
   <!-- Metapackage exported to parent -->
   <export>

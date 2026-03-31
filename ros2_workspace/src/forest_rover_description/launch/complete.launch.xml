@@ -1,0 +1,5 @@
+<launch>
+  <include file="$(find-pkg-share forest_rover_description)/launch/phase2_bringup.launch.py"/>
+  <include file="$(find-pkg-share forest_rover_description)/launch/perception_phase3.launch.py"/>
+  <include file="$(find-pkg-share forest_rover_description)/launch/phase4_logging.launch.py"/>
+</launch>

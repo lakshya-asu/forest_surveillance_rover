@@ -25,11 +25,12 @@ The rover is designed as a practical surveillance robot for wooded environments 
 
 - Phase 1 focus: embedded reliability and ROS-hardware bridge.
 - Phase 2 focus: odometry, TF, EKF fusion, and autonomy bringup.
-- Later phases: full perception stack and mission-level behavior.
+- Phase 3 focus: YOLOv8 detection, red ball tracking, smoke alert integration.
+- Phase 4 focus: complete launch orchestration, telemetry logging, post-mission analysis.
 
 ## Implementation Retrospective (Completed To Date)
 
-This repository now contains a completed infrastructure baseline plus executed Phase 1 and Phase 2 software foundations.
+This repository now contains a completed infrastructure baseline plus executed Phase 1, 2, 3, and 4 software foundations.
 
 ### Phase 0 (Infrastructure Foundation)
 
@@ -73,6 +74,37 @@ Implemented autonomy stack baseline:
 - Rover URDF/xacro model with base, wheels, camera, and IMU frames.
 - Phase-2 bringup launch that composes description + bridge + autonomy nodes.
 
+### Phase 3 (Vision & Detection)
+
+Implemented perception and safety-detection stack:
+
+- `yolo_detector_node`:
+    - YOLOv8 inference pipeline with confidence/NMS configuration,
+    - simulation fallback mode when model/runtime is unavailable,
+    - publishes `/perception/detections` and inference FPS telemetry.
+- `color_tracker_node`:
+    - HSV-based red object extraction,
+    - contour centroid and distance estimation,
+    - publishes `/perception/ball_centroid`, tracking confidence, and debug image.
+- `smoke_detection_node`:
+    - threshold-based smoke classification,
+    - publishes `/gas_sensor/reading` and `/alerts/smoke_detected`,
+    - emits structured rover events for autonomy/logging.
+- `autonomy_manager` integration:
+    - smoke alerts switch state from patrol to investigate-fire route.
+
+### Phase 4 (Integration & Hardening Foundation)
+
+Implemented system-integration and observability baseline:
+
+- complete launch pipeline via `complete.launch.xml`.
+- `data_logger_node` with SQLite mission persistence for telemetry, detections, odometry, and events.
+- post-mission CLI analysis script for detection and odometry summaries.
+- integrated launch layers:
+    - phase-2 mobility/autonomy,
+    - phase-3 perception,
+    - phase-4 logging.
+
 ## System Architecture
 
 ```mermaid
@@ -109,10 +141,13 @@ flowchart LR
 ros2_workspace/
     src/
         forest_rover_msgs/            # custom ROS interfaces
-        forest_rover_description/     # URDF + bringup launch
-        forest_rover_hardware/
-            stm32_firmware_driver/      # STM32 bridge node
+        forest_rover_description/     # URDF + bringup launch orchestration
+        stm32_firmware_driver/        # STM32 bridge node
         autonomy_manager/             # phase-2 odom and control nodes
+        yolo_detector_node/           # phase-3 animal detector
+        color_tracker_node/           # phase-3 red ball tracker
+        smoke_detection_node/         # phase-3 smoke alert logic
+        data_logger_node/             # phase-4 mission logger + analysis
 
 firmware/STM32_FirmwareProject/
     Core/Inc/                       # firmware headers
@@ -132,10 +167,10 @@ colcon build --symlink-install
 source install/setup.bash
 ```
 
-### 2) Run Phase 2 bringup (simulation bridge mode)
+### 2) Run complete integration bringup (Phase 2 + 3 + 4)
 
 ```bash
-ros2 launch forest_rover_description phase2_bringup.launch.py
+ros2 launch forest_rover_description complete.launch.xml
 ```
 
 ### 3) Verify key topics
@@ -144,7 +179,15 @@ ros2 launch forest_rover_description phase2_bringup.launch.py
 ros2 topic echo /environmental/data
 ros2 topic echo /raw_motor_feedback
 ros2 topic echo /odometry/raw
+ros2 topic echo /perception/detections
+ros2 topic echo /alerts/smoke_detected
 ros2 service call /emergency_stop forest_rover_msgs/srv/EmergencyStop "{stop: true, reason: 'test'}"
+```
+
+### 4) Analyze mission logs (Phase 4)
+
+```bash
+python3 install/data_logger_node/lib/data_logger_node/analyze_mission.py mission_logs/mission_events.db
 ```
 
 ## Firmware Build (Toolchain Required)
@@ -171,9 +214,8 @@ Expected outputs:
 
 ## Roadmap Snapshot
 
-- Completed: Phase 0, Phase 1, Phase 2 foundations.
-- Next: perception completion (YOLOv8 runtime optimization, red-ball tracker tuning, event-driven mission manager).
-- After that: field validation, telemetry hardening, and long-duration endurance tests.
+- Completed: Phase 0, Phase 1, Phase 2, Phase 3, and Phase 4 implementation baselines.
+- Next: field-calibration, long-duration mission validation, and performance tuning on target hardware.
 
 ## License
 

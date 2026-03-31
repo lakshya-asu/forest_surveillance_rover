@@ -21,6 +21,10 @@
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>stm32_firmware_driver</exec_depend>
   <exec_depend>autonomy_manager</exec_depend>
+  <exec_depend>yolo_detector_node</exec_depend>
+  <exec_depend>color_tracker_node</exec_depend>
+  <exec_depend>smoke_detection_node</exec_depend>
+  <exec_depend>data_logger_node</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

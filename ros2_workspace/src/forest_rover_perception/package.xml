@@ -12,6 +12,7 @@
   <!-- Sub-packages -->
   <exec_depend>yolo_detector_node</exec_depend>
   <exec_depend>color_tracker_node</exec_depend>
+  <exec_depend>smoke_detection_node</exec_depend>
 
   <export>
     <metapackage />

@@ -1,0 +1,3 @@
+data_logger_node:
+  ros__parameters:
+    db_path: mission_logs/mission_events.db

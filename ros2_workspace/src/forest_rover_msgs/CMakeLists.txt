@@ -11,6 +11,9 @@ set(msg_files
 	"msg/MotorCommand.msg"
 	"msg/MotorFeedback.msg"
 	"msg/EnvironmentalData.msg"
+	"msg/Detection.msg"
+	"msg/DetectionArray.msg"
+	"msg/RoverEvent.msg"
 )
 
 set(srv_files

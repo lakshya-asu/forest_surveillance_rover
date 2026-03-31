@@ -44,6 +44,10 @@ firmware/STM32_FirmwareProject/build/
 firmware/STM32_FirmwareProject/cmake-build-debug/
 firmware/STM32_FirmwareProject/cmake-build-release/
 
+# Runtime mission artifacts
+ros2_workspace/mission_logs/
+*.db
+
 # Claude session logs
 .claude/logs/
 .claude/session-*
