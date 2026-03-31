@@ -1,0 +1,5 @@
+cmd_vel_smoother:
+  ros__parameters:
+    max_linear_accel: 0.4
+    max_angular_accel: 0.8
+    output_rate_hz: 30.0

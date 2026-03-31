@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>forest_rover_hardware</name>
+  <version>0.1.0</version>
+  <description>Forest Rover hardware drivers and sensor interfaces (STM32 bridge, cameras, sensors)</description>
+  <maintainer email="flux@example.com">Flux</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Sub-packages -->
+  <exec_depend>stm32_firmware_driver</exec_depend>
+  <exec_depend>camera_driver</exec_depend>
+  <exec_depend>sensor_fusion_node</exec_depend>
+
+  <export>
+    <metapackage />
+  </export>
+</package>

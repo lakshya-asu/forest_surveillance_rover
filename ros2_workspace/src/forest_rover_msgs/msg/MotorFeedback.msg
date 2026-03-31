@@ -1,0 +1,7 @@
+builtin_interfaces/Time stamp
+float32 left_rpm
+float32 right_rpm
+int32 left_encoder_ticks
+int32 right_encoder_ticks
+float32 battery_voltage
+bool watchdog_triggered

@@ -19,3 +19,31 @@ fp-info-cache
 # Editors
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ROS2 build directories
+ros2_workspace/build/
+ros2_workspace/install/
+ros2_workspace/log/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# CMake build
+firmware/STM32_FirmwareProject/build/
+firmware/STM32_FirmwareProject/cmake-build-debug/
+firmware/STM32_FirmwareProject/cmake-build-release/
+
+# Claude session logs
+.claude/logs/
+.claude/session-*

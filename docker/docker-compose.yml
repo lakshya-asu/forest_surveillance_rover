@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  ros2-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile.arm64
+    image: forest-rover:ros2-humble-arm64
+    container_name: forest-rover-ros2
+    
+    # Mount the workspace for interactive development
+    volumes:
+      - ../ros2_workspace:/home/ros/ros2_ws
+      - ../firmware:/home/ros/firmware
+    
+    # Keep container running
+    stdin_open: true
+    tty: true
+    
+    # Resource limits for RPi CM4
+    deploy:
+      resources:
+        limits:
+          cpus: '3'
+          memory: 1G
+        reservations:
+          cpus: '1'
+          memory: 512M
+    
+    # Allow privileged mode for hardware access (if needed for serial)
+    # Uncomment if interfacing with STM32 over USB
+    # privileged: true
+    # devices:
+    #   - /dev/ttyUSB0:/dev/ttyUSB0
+    
+    environment:
+      - ROS_DOMAIN_ID=1
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp

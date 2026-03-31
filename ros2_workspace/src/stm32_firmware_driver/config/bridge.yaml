@@ -1,0 +1,7 @@
+stm32_firmware_bridge:
+  ros__parameters:
+    serial_port: /dev/ttyUSB0
+    baud_rate: 115200
+    frame_rate_hz: 50.0
+    simulate: true
+    wheel_base_m: 0.26

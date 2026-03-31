@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>forest_rover_core</name>
+  <version>0.1.0</version>
+  <description>Forest Surveillance Rover - Core meta-package</description>
+  <maintainer email="flux@example.com">Flux</maintainer>
+  <license>MIT</license>
+
+  <url type="website">https://github.com/flux/forest_surveillance_rover</url>
+  <author email="flux@example.com">Flux</author>
+
+  <!-- Metapackage: groups all Forest Rover packages -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>forest_rover_hardware</exec_depend>
+  <exec_depend>forest_rover_perception</exec_depend>
+  <exec_depend>forest_rover_autonomy</exec_depend>
+  <exec_depend>forest_rover_description</exec_depend>
+  <exec_depend>forest_rover_msgs</exec_depend>
+  <exec_depend>forest_rover_utils</exec_depend>
+
+  <!-- Metapackage exported to parent -->
+  <export>
+    <metapackage />
+  </export>
+</package>

@@ -1,0 +1,22 @@
+build:
+  symlink-install: true
+  cmake-args:
+    - -DCMAKE_BUILD_TYPE=Release
+    - -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+test:
+  ctest-args:
+    - --output-on-failure
+
+paths:
+  - src
+
+cmake-args:
+  - -DCMAKE_BUILD_TYPE=Release
+
+environment-variables:
+  # Performance optimizations for ARM64
+  RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
+  ROS_DOMAIN_ID: "1"
+
+log-base: build/log

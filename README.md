@@ -1,99 +1,180 @@
-# Forest Surveillance Rover PCB
+# Forest Surveillance Rover
 
-A 4-layer KiCad main-controller board for an autonomous forest surveillance rover, integrating power management, motor control, LoRa telemetry, and multi-sensor fusion on a single board.
+![ROS 2 Humble](https://img.shields.io/badge/ROS%202-Humble-22314E?logo=ros&logoColor=white)
+![STM32F407](https://img.shields.io/badge/MCU-STM32F407-03234B?logo=stmicroelectronics&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
+![C Firmware](https://img.shields.io/badge/Firmware-C99-00599C?logo=c&logoColor=white)
+![Build](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?logo=githubactions&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
-![Rendered top-view of the Forest Surveillance Rover main controller PCB with STM32, LoRa edge section, power stages, and motor outputs.](images/render-placeholder.svg)
+Autonomous ground rover platform for forest monitoring with a split-compute architecture:
 
-Designed as the rover's central electronics hub, this board ties together the battery and solar power path, real-time control around an STM32F407, long-range telemetry over LoRa, and expansion interfaces for onboard and off-board sensing.
+- Raspberry Pi CM4 runs ROS 2 autonomy, perception, and mission logic.
+- STM32F407 runs hard real-time motor, sensor, and safety control.
 
-## Features
+Core field goals:
 
-- 4-layer PCB stackup: Signal / GND / Power / Signal
-- Approximate board outline: 100 mm x 80 mm with four M3 mounting holes
-- Dual-input power architecture for 3S LiPo battery and solar charging
-- LT3652-inspired MPPT charging stage with reverse-polarity protection
-- TPS54331 12V-to-5V main buck rail and AMS1117-3.3 secondary rail
-- STM32F407VGT6 main MCU with SWD, crystals, external SPI flash, and expansion header
-- Dual DRV8871 DC motor channels with current sensing and encoder interfaces
-- Integrated environmental sensing with BME280 and BNO055 on the shared I2C bus
-- LoRa telemetry using an RFM95W footprint and edge-mount SMA connector
-- Raspberry Pi CM4 companion interface over UART, I2C, interrupt, and USB-C power/data
+- detect animals with YOLOv8,
+- detect smoke risk via MQ-2 gas sensing,
+- track a red marker/ball for guided behaviors,
+- patrol waypoints and report environmental telemetry.
 
-## Block Diagram
+## What We Are Building
+
+The rover is designed as a practical surveillance robot for wooded environments where GNSS quality, visibility, and terrain can change quickly. The architecture separates deterministic control from high-level AI workloads:
+
+- Phase 1 focus: embedded reliability and ROS-hardware bridge.
+- Phase 2 focus: odometry, TF, EKF fusion, and autonomy bringup.
+- Later phases: full perception stack and mission-level behavior.
+
+## Implementation Retrospective (Completed To Date)
+
+This repository now contains a completed infrastructure baseline plus executed Phase 1 and Phase 2 software foundations.
+
+### Phase 0 (Infrastructure Foundation)
+
+- repository split preserved hardware history on `hardware/rev-a` and opened `main` for ROS-first software development,
+- ROS 2 workspace with package layout for hardware, autonomy, perception, messages, and description,
+- STM32 firmware project scaffold with FreeRTOS task model,
+- Docker ARM64 environment for Raspberry Pi compatible development,
+- GitHub Actions pipeline for build/lint/security workflows,
+- architecture documentation and full implementation plan.
+
+### Phase 1 (Hardware Driver Layer & Real-Time Firmware)
+
+Implemented firmware and ROS bridge foundations:
+
+- STM32 modular firmware components:
+    - UART bridge with COBS framing and CRC16,
+    - encoder abstraction and ISR-update path,
+    - motor driver with watchdog stop handling,
+    - non-blocking sensor polling interface for environmental data.
+- ROS 2 interfaces (`forest_rover_msgs`):
+    - `MotorCommand.msg`,
+    - `MotorFeedback.msg`,
+    - `EnvironmentalData.msg`,
+    - `EmergencyStop.srv`.
+- STM32 ROS bridge node (`stm32_firmware_driver`):
+    - subscribes command velocity,
+    - publishes IMU/environment/motor feedback/odometry raw streams,
+    - exposes emergency stop service,
+    - supports serial mode and simulation mode.
+
+### Phase 2 (Autonomy & Navigation Base)
+
+Implemented autonomy stack baseline:
+
+- `autonomy_manager` package with:
+    - wheel odometry publisher from motor feedback,
+    - `odom -> base_link` TF broadcaster,
+    - command-velocity smoother for acceleration-limited control,
+    - lightweight patrol waypoint publisher.
+- EKF configuration for `robot_localization` sensor fusion.
+- Rover URDF/xacro model with base, wheels, camera, and IMU frames.
+- Phase-2 bringup launch that composes description + bridge + autonomy nodes.
+
+## System Architecture
 
 ```mermaid
 flowchart LR
-    SP[Solar Panel 18V OC] --> MPPT[MPPT Charger]
-    BAT[3S LiPo Battery] --> EFUSE[eFuse / Motor Power Path]
-    MPPT --> BAT
-    BAT --> BUCK[12V to 5V Buck]
-    BUCK --> LDO[3.3V LDO]
-    BUCK --> CM4[Raspberry Pi CM4]
-    LDO --> MCU[STM32F407VGT6]
-    MCU --> FLASH[W25Q128 SPI Flash]
-    MCU --> LORA[RFM95W LoRa]
-    MCU --> I2C[I2C Sensor Bus]
-    I2C --> BME280[BME280]
-    I2C --> BNO055[BNO055]
-    MCU --> AFE[Analog Sensor Front-End]
-    MCU --> DRV1[DRV8871 Motor A]
-    MCU --> DRV2[DRV8871 Motor B]
-    EFUSE --> DRV1
-    EFUSE --> DRV2
-    MCU --> CM4
+        subgraph EdgeCompute[RPi CM4 - ROS 2]
+                BRIDGE[stm32_firmware_bridge]
+                ODOM[odometry_publisher]
+                EKF[robot_localization EKF]
+                AUTONOMY[autonomy_manager]
+                PERCEPTION[YOLOv8 + color tracker]
+        end
+
+        subgraph Realtime[STM32F407 - FreeRTOS]
+                UART[UART/COBS Protocol]
+                MOTOR[PID Motor Control @100Hz]
+                SENSOR[Sensor Acquisition Task]
+                SAFETY[Watchdog + E-Stop]
+        end
+
+        BRIDGE <-->|UART1 115200| UART
+        UART --> MOTOR
+        UART --> SENSOR
+        UART --> SAFETY
+
+        BRIDGE --> ODOM
+        ODOM --> EKF
+        AUTONOMY --> BRIDGE
+        PERCEPTION --> AUTONOMY
 ```
-
-## Design Tools
-
-- KiCad 7+
-- Ngspice
-- Qucs-S
-
-## How To Open
-
-1. Clone the repository.
-2. Open `hardware/kicad/forest-rover.kicad_pro` in KiCad 7 or newer.
-3. Review the supporting notes in `docs/` before editing the schematic or layout.
-
-## Simulation
-
-Run the simplified power-stage simulations from the repository root or inside `simulation/ngspice/`:
-
-```bash
-ngspice simulation/ngspice/buck-converter.spice
-ngspice simulation/ngspice/battery-charger.spice
-```
-
-Qucs-S notes for the analog front-end are in `simulation/qucs-s/README.md`.
-
-## Design Decisions
-
-The board uses a 4-layer stackup to keep return paths tight, simplify power distribution, and improve EMI behavior around the buck converter, motor drivers, and LoRa section. A dedicated MPPT-style charging path makes the solar input story believable for an outdoor rover, while the STM32F407 plus CM4 split keeps real-time control separate from higher-level autonomy and networking tasks.
-
-Component selection favors common parts with strong documentation and broad availability. Built-in KiCad libraries are preferred wherever practical, and the design notes call out where footprints or symbols may need refinement before fabrication.
-
-## Hardware Summary
-
-| Area | Implementation |
-| --- | --- |
-| Main controller | STM32F407VGT6 with HSE/LSE clocks, SWD, BOOT0 access, and external W25Q128 SPI flash |
-| Main power tree | 3S LiPo input, LT3652-style solar charging path, TPS54331 5V rail, AMS1117-3.3 logic rail |
-| Motor path | Battery-fed motor rail behind TPS2596 eFuse with two DRV8871 motor channels |
-| Sensors | BME280, BNO055, PIR analog front-end, thermistor divider, external LIDAR and thermal camera headers |
-| Communications | RFM95W LoRa module with edge SMA, CM4 UART/I2C/interrupt interface, USB-C support |
-
-## Status
-
-Prototype Rev A - fabricated and tested
 
 ## Repository Layout
 
-- `docs/` contains design notes, the BOM, block diagram, and power budget
-- `hardware/kicad/` contains the KiCad project and design files
-- `simulation/` contains the simplified Ngspice and Qucs-S examples
-- `firmware/` points to the future software repository split
-- `images/` holds rendered-board assets and future exports
+```text
+ros2_workspace/
+    src/
+        forest_rover_msgs/            # custom ROS interfaces
+        forest_rover_description/     # URDF + bringup launch
+        forest_rover_hardware/
+            stm32_firmware_driver/      # STM32 bridge node
+        autonomy_manager/             # phase-2 odom and control nodes
+
+firmware/STM32_FirmwareProject/
+    Core/Inc/                       # firmware headers
+    Core/Src/                       # firmware implementation
+
+docker/                           # arm64 dev environment
+docs/                             # architecture and planning docs
+```
+
+## Quick Start
+
+### 1) Build ROS 2 workspace
+
+```bash
+cd ros2_workspace
+colcon build --symlink-install
+source install/setup.bash
+```
+
+### 2) Run Phase 2 bringup (simulation bridge mode)
+
+```bash
+ros2 launch forest_rover_description phase2_bringup.launch.py
+```
+
+### 3) Verify key topics
+
+```bash
+ros2 topic echo /environmental/data
+ros2 topic echo /raw_motor_feedback
+ros2 topic echo /odometry/raw
+ros2 service call /emergency_stop forest_rover_msgs/srv/EmergencyStop "{stop: true, reason: 'test'}"
+```
+
+## Firmware Build (Toolchain Required)
+
+```bash
+cd firmware/STM32_FirmwareProject
+mkdir -p build && cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make
+```
+
+Expected outputs:
+
+- `forest-rover-firmware.elf`
+- `forest-rover-firmware.hex`
+- `forest-rover-firmware.bin`
+
+## Engineering Notes
+
+- UART protocol uses packet framing to protect against byte-stream corruption.
+- Watchdog behavior is integrated in both firmware and ROS-side service path.
+- Autonomy layer currently prioritizes deterministic control flow and debug visibility over full mission complexity.
+- Hardware and software are intentionally decoupled to keep real-time stability independent from AI/perception load.
+
+## Roadmap Snapshot
+
+- Completed: Phase 0, Phase 1, Phase 2 foundations.
+- Next: perception completion (YOLOv8 runtime optimization, red-ball tracker tuning, event-driven mission manager).
+- After that: field validation, telemetry hardening, and long-duration endurance tests.
 
 ## License
 
-Released under the MIT License. See `LICENSE`.
+MIT License. See `LICENSE`.

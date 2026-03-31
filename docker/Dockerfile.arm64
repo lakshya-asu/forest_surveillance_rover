@@ -1,0 +1,117 @@
+# Multi-stage Docker build for Forest Surveillance Rover ROS2 on Raspberry Pi CM4
+
+# Stage 1: Build environment
+FROM arm64v8/ubuntu:22.04 AS builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV ROS_DISTRO=humble
+ENV LANG=C.UTF-8
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    curl \
+    git \
+    gnupg \
+    lsb-release \
+    software-properties-common \
+    wget \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add ROS 2 repository
+RUN curl -sSL https://repo.ros2.org/ros.key | apt-key add - && \
+    add-apt-repository "deb [arch=arm64] http://repo.ros2.org/ubuntu $(lsb_release -cs) main" && \
+    apt-get update
+
+# Install ROS 2 Humble and dependencies
+RUN apt-get install -y --no-install-recommends \
+    ros-${ROS_DISTRO}-desktop \
+    python3-argcomplete \
+    python3-colcon-common-extensions \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Python ML/vision dependencies for YOLOv8
+RUN pip install --no-cache-dir \
+    ultralytics \
+    opencv-python-headless \
+    numpy \
+    torch \
+    onnxruntime
+
+# ARM-specific optimization: Install optimized libraries
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libatlas-base-dev \
+    libjasper-dev \
+    libtiff-dev \
+    libjasper1 \
+    libtiff5 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create ros user
+RUN useradd -m -s /bin/bash ros && \
+    mkdir -p /home/ros && \
+    chown -R ros:ros /home/ros
+
+USER ros
+
+# Setup ROS environment
+RUN mkdir -p /home/ros/ros2_ws/src && \
+    echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /home/ros/.bashrc && \
+    echo "source /home/ros/ros2_ws/install/setup.bash" >> /home/ros/.bashrc
+
+WORKDIR /home/ros/ros2_ws
+
+# Stage 2: Runtime environment
+FROM arm64v8/ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV ROS_DISTRO=humble
+ENV LANG=C.UTF-8
+
+# Install minimal ROS 2 runtime and dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    gnupg \
+    lsb-release \
+    software-properties-common \
+    && curl -sSL https://repo.ros2.org/ros.key | apt-key add - && \
+    add-apt-repository "deb [arch=arm64] http://repo.ros2.org/ubuntu $(lsb_release -cs) main" && \
+    apt-get update && apt-get install -y --no-install-recommends \
+    ros-${ROS_DISTRO}-ros-core \
+    python3 \
+    python3-pip \
+    libopenblas-dev \
+    liblapack-dev \
+    libjasper1 \
+    libtiff5 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python runtime packages
+RUN pip install --no-cache-dir \
+    rclpy \
+    sensor-msgs \
+    geometry-msgs \
+    ultralytics \
+    opencv-python-headless
+
+# Create ros user
+RUN useradd -m -s /bin/bash ros && \
+    mkdir -p /home/ros/ros2_ws && \
+    chown -R ros:ros /home/ros
+
+USER ros
+WORKDIR /home/ros/ros2_ws
+
+# Source ROS environment
+RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /home/ros/.bashrc && \
+    echo "source /home/ros/ros2_ws/install/setup.bash" >> /home/ros/.bashrc
+
+# Health check: ROS2 system can be sourced
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD /bin/bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && ros2 --version"
+
+# Default command: Start bash in colcon workspace
+CMD ["/bin/bash"]
