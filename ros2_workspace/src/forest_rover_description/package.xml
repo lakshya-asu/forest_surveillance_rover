@@ -25,6 +25,8 @@
   <exec_depend>color_tracker_node</exec_depend>
   <exec_depend>smoke_detection_node</exec_depend>
   <exec_depend>data_logger_node</exec_depend>
+  <exec_depend>telemetry_gateway_node</exec_depend>
+  <exec_depend>base_station_receiver_node</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

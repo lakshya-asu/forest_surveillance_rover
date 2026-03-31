@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>base_station_receiver_node</name>
+  <version>0.1.0</version>
+  <description>Base station telemetry receiver and logging for forest rover LoRa link</description>
+
+  <maintainer email="dev@example.com">Forest Rover Dev</maintainer>
+  <license>MIT</license>
+
+  <author email="dev@example.com">Forest Rover Team</author>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>forest_rover_msgs</exec_depend>
+
+  <test_depend>pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
