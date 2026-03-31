@@ -105,6 +105,18 @@ Implemented system-integration and observability baseline:
     - phase-3 perception,
     - phase-4 logging.
 
+### Phase 5 (LoRa Telemetry & Remote Operations)
+
+Implemented long-range telemetry and ground station monitoring:
+
+- `telemetry_gateway_node`: rover-side 10-second heartbeat transmission aggregating odometry, detections, battery, smoke alerts, gas sensor, and autonomy state.
+- `base_station_receiver_node`: ground station node with SQLite logging, alert monitoring, and rover location publishing.
+- `RFM95W LoRa firmware driver` (C): 868 MHz SPI-based radio control with CRC-16 CCITT validation, buffer overflow protection, and Friis path loss distance estimation.
+- ROS 2 message types: `TelemetryHeartbeat` (15 fields), `LoRaStatus` (11 fields).
+- Phase 5 launch composition integrating phases 2-5 with complete orchestration.
+- Production hardening: thread-safe state locks, database context managers, input validation, smoke alert state reset, CRC receive validation framework.
+- All 15 workspace packages compile with zero errors; code review verified all critical and high-severity issues resolved.
+
 ## System Architecture
 
 ```mermaid
@@ -140,18 +152,29 @@ flowchart LR
 ```text
 ros2_workspace/
     src/
-        forest_rover_msgs/            # custom ROS interfaces
-        forest_rover_description/     # URDF + bringup launch orchestration
-        stm32_firmware_driver/        # STM32 bridge node
+        forest_rover_msgs/            # custom ROS interfaces (includes Phase 5: TelemetryHeartbeat, LoRaStatus)
+        forest_rover_description/     # URDF + bringup launch orchestration (includes phase5_telemetry.launch.py)
+        forest_rover_hardware/        # robot_state_publisher for URDF
+        forest_rover_core/            # core node libraries
+        forest_rover_autonomy/        # metapackage helper
+        forest_rover_perception/      # metapackage helper
+        forest_rover_utils/           # shared utilities
+        stm32_firmware_driver/        # STM32 bridge node (includes RFM95W LoRa driver)
         autonomy_manager/             # phase-2 odom and control nodes
         yolo_detector_node/           # phase-3 animal detector
         color_tracker_node/           # phase-3 red ball tracker
         smoke_detection_node/         # phase-3 smoke alert logic
         data_logger_node/             # phase-4 mission logger + analysis
+        telemetry_gateway_node/       # phase-5 rover heartbeat transmission
+        base_station_receiver_node/   # phase-5 ground station logging
 
-firmware/STM32_FirmwareProject/
-    Core/Inc/                       # firmware headers
-    Core/Src/                       # firmware implementation
+firmware/
+    STM32_FirmwareProject/
+        Core/Inc/                       # firmware headers
+        Core/Src/                       # firmware implementation
+    stm32/Drivers/RFM95W/
+        rfm95w_lora_driver.h            # phase-5 LoRa radio driver header
+        rfm95w_lora_driver.c            # phase-5 LoRa radio driver implementation
 
 docker/                           # arm64 dev environment
 docs/                             # architecture and planning docs
@@ -167,13 +190,19 @@ colcon build --symlink-install
 source install/setup.bash
 ```
 
-### 2) Run complete integration bringup (Phase 2 + 3 + 4)
+### 2) Run complete integration bringup (Phase 2-5: autonomy + perception + logging + telemetry)
 
 ```bash
-ros2 launch forest_rover_description complete.launch.xml
+ros2 launch forest_rover_description phase5_telemetry.launch.py
 ```
 
-### 3) Verify key topics
+### 3) Or run Phase 2-4 bringup (autonomy + perception + logging, without telemetry)
+
+```bash
+ros2 launch forest_rover_description complete.launch.py
+```
+
+### 4) Verify key topics
 
 ```bash
 ros2 topic echo /environmental/data
@@ -214,8 +243,9 @@ Expected outputs:
 
 ## Roadmap Snapshot
 
-- Completed: Phase 0, Phase 1, Phase 2, Phase 3, and Phase 4 implementation baselines.
-- Next: field-calibration, long-duration mission validation, and performance tuning on target hardware.
+- Completed: Phase 0, Phase 1, Phase 2, Phase 3, Phase 4, and Phase 5 implementation baselines.
+- Phase 5 includes: LoRa telemetry gateway, base station receiver, RFM95W firmware driver, and complete ground station monitoring.
+- Next: field-calibration, long-duration mission validation, and performance tuning on target hardware (with Phase 2 STM32 SPI integration for RFM95W).
 
 ## License
 
